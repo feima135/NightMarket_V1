@@ -14,8 +14,8 @@ class CarnivalGamesScene extends Phaser.Scene {
     this.ringTossed = 0;
 
     // store BG
-    this.add.image(180, config.height - 350, "CarnivalGamesStore");
-    this.add.image(560, config.height - 350, "CarnivalGamesStore");
+    //this.add.image(180, config.height - 220, "CarnivalGamesStore");
+    //this.add.image(620, config.height - 220, "CarnivalGamesStore");
 
     // prepare rng indices
     let tempBufferBalloonsArray = [];
@@ -39,10 +39,10 @@ class CarnivalGamesScene extends Phaser.Scene {
   createTossBottles() {
     let maxRow = 2;
     let maxCol = 4;
-    let starPosX = 450;
+    let starPosX = 480;
     let starPosY = 300;
-    let xGap = 70;
-    let yGap = 150;
+    let xGap = 80;
+    let yGap = 200;
     this.totalTossBottles = maxRow * maxCol;
 
     // create a grid of ring toss
@@ -57,16 +57,20 @@ class CarnivalGamesScene extends Phaser.Scene {
         hiddenStar.visible = false;
 
         // adding balloon sprite element
-        var tossBottle = this.add.sprite(currPosX, currPosY,
-          "TossBottleSprites").setInteractive();
-
+        var tossBottle = this.add.image(currPosX, currPosY,"TossBottleStatic").setInteractive();
         tossBottle.hiddenStar = hiddenStar;
 
+        // attach some toss rings
+        var tossRing = this.add.sprite(currPosX, currPosY - 90,"TossRings");
+        tossRing.visible = false;
+        tossBottle.tossRing = tossRing;
+
+        // create the toss animation
         this.anims.create({
           key: "tossRingToBottle",
-          frames: this.anims.generateFrameNumbers('TossBottleSprites',
-            { start: 4, end:  7}),
-          frameRate: 15,
+          frames: this.anims.generateFrameNumbers('TossRings',
+            { start: 0, end:  5}),
+          frameRate: 20,
         });
 
         tossBottle.once('pointerup', this.onTossBottlePressed, { targetSprite: tossBottle, owner: this });
@@ -80,9 +84,13 @@ class CarnivalGamesScene extends Phaser.Scene {
     let maxCol = 4;
     let balloonStartPosX = 50;
     let balloonStartPosY = 300;
-    let xGap = 70;
+    let xGap = 90;
     let yGap = 150;
     this.totalBalloons = maxRow * maxCol;
+
+    let maxFrames = 6;
+    let startFrameIndex = 0;
+    let startFrameIndices = [0, 6, 12];
 
     // create a grid of balloons
     for (var row = 0; row < maxRow; ++row) {
@@ -90,6 +98,9 @@ class CarnivalGamesScene extends Phaser.Scene {
 
         let balloonPosX = balloonStartPosX + col * xGap;
         let balloonPosY = balloonStartPosY + row * yGap;
+
+        // randomly assign balloon color
+        startFrameIndex = Phaser.Utils.Array.GetRandom(startFrameIndices);
 
         // create hidden star
         var hiddenStar = this.add.image(balloonPosX, balloonPosY, "StarIcon");
@@ -99,11 +110,13 @@ class CarnivalGamesScene extends Phaser.Scene {
         var balloonSprite = this.add.sprite(balloonPosX, balloonPosY,"BalloonSprites").setInteractive();
 
         balloonSprite.hiddenStar = hiddenStar;
+        balloonSprite.explodeAnim = "BalloonExplode" + startFrameIndex;
+        balloonSprite.setFrame(startFrameIndex);
 
         this.anims.create({
-          key: "BalloonExplode",
+          key: balloonSprite.explodeAnim,
           frames: this.anims.generateFrameNumbers('BalloonSprites',
-            { start: 0, end: 8 }),
+            { start: startFrameIndex, end: startFrameIndex + maxFrames - 1 }),
           frameRate: 15
         });
 
@@ -113,7 +126,8 @@ class CarnivalGamesScene extends Phaser.Scene {
   }
 
   onTossBottlePressed() {
-    this.targetSprite.play("tossRingToBottle");
+    this.targetSprite.tossRing.visible = true;
+    this.targetSprite.tossRing.play("tossRingToBottle");
 
     // update counter scores
     ++this.owner.ringTossed;
@@ -129,31 +143,30 @@ class CarnivalGamesScene extends Phaser.Scene {
         scaleX: 1.3,
         scaleY: 1.3,
         duration: 100,
-        delay: 500,
+        delay: 600,
         yoyo: true
       });
 
       // fly up to star bar, specifically the next star
       this.owner.add.tween({
         targets: targetFlyOverStar,
-        duration: 300,
+        duration: 420,
         y: this.owner.starIcons[g_Score].y,
         x: this.owner.starIcons[g_Score].x,
-        delay: 800,
+        delay: 920,
         onCompleteScope: this.owner,
         onComplete: function () {
           targetFlyOverStar.destroy();
           this.scene.get("HomePage").increaseGlobalScore(this);
+          this.checkGameOverCondition();
         }
       });
     }
-
-    this.owner.checkGameOverCondition();
   }
 
   // when balloon is pressed, play explosion 
   onBalloonPressed() {
-    this.targetSprite.play("BalloonExplode");
+    this.targetSprite.play(this.targetSprite.explodeAnim);
     this.targetSprite.on('animationcomplete', () => this.targetSprite.destroy());
 
     // update counter scores
@@ -185,16 +198,10 @@ class CarnivalGamesScene extends Phaser.Scene {
         onComplete: function () {
           targetFlyOverStar.destroy();
           this.scene.get("HomePage").increaseGlobalScore(this);
+          this.checkGameOverCondition();
         }
       });
-
-      this.owner.checkGameOverCondition();
     }
-
-    // game over condition
-    // if (this.owner.balloonExploded >= this.owner.totalBalloons) {
-    //   this.scene.get("HomePage").gameOver();
-    // }
   }
 
   checkGameOverCondition()

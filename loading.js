@@ -60,20 +60,21 @@ class LoadingScene extends Phaser.Scene {
 
     // Food Store
     this.load.image('FoodStoreBG', 'assets/FoodStoreScene/FoodStoreBG.png');
-    this.load.spritesheet('ChickenWing', 'assets/FoodStoreScene/ChickenWing.png', { frameWidth: 128, frameHeight: 128 });
-    this.load.spritesheet('CandyFloss', 'assets/FoodStoreScene/CandyFloss.png', { frameWidth: 64, frameHeight: 121 });
+    this.load.image('CrossX', 'assets/FoodStoreScene/CrossX.png');
+    this.load.spritesheet('FoodItems', 'assets/FoodStoreScene/FoodItems.png',{ frameWidth: 100, frameHeight: 100 });
     this.load.image('FoodCustomerIdle', 'assets/FoodStoreScene/FoodCustomerIdle.png');
     this.load.image('FoodCustomerOpen', 'assets/FoodStoreScene/FoodCustomerOpen.png');
-    this.load.image('CandyFlossWord', 'assets/FoodStoreScene/CandyFloss_Word.png');
-    this.load.image('ChickenWingWord', 'assets/FoodStoreScene/ChickenWing_Word.png');
+    this.load.spritesheet('FoodItemsWord', 'assets/FoodStoreScene/FoodItemsWord.png', { frameWidth: 180, frameHeight: 144 });
+
     this.load.image('ChatBubble', 'assets/FoodStoreScene/ChatBubble.png');
     this.load.image('TimerBar', 'assets/TimerBar.png');
     this.load.image('TimerBarContent', 'assets/TimerBarContent.png');
 
     // Carnival Games
     this.load.image('CarnivalGamesStore', 'assets/CarnivalGames/CarnivalGamesStore.png');
-    this.load.spritesheet('BalloonSprites', 'assets/CarnivalGames/BalloonSprites.png', { frameWidth: 32, frameHeight: 128 });
-    this.load.spritesheet('TossBottleSprites', 'assets/CarnivalGames/TossBottle.png', { frameWidth: 100, frameHeight: 300 });
+    this.load.image('TossBottleStatic', 'assets/CarnivalGames/TossBottleStatic.png');
+    this.load.spritesheet('BalloonSprites', 'assets/CarnivalGames/BalloonSprites.png', { frameWidth: 128, frameHeight: 128 });
+    this.load.spritesheet('TossRings', 'assets/CarnivalGames/TossRings.png', { frameWidth: 60, frameHeight: 213 });
 
   }
 }

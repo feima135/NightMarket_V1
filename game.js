@@ -13,13 +13,13 @@ class HomePage extends Phaser.Scene {
   create() {
     this.add.image(config.width / 2, config.height / 2, "HomePageBG");
 
-    this.FoodStoreBtn = this.add.image(130, 250, "FoodStore");
+    this.FoodStoreBtn = this.add.image(130, 380, "FoodStore").setScale(0.7,0.7);
     this.FoodStoreBtn.alpha = 0.5;
 
-    this.CarnivalGamesBtn = this.add.image(450, 250, "CarnivalGames");
+    this.CarnivalGamesBtn = this.add.image(350, 200, "CarnivalGames").setScale(0.7,0.7);
     this.CarnivalGamesBtn.alpha = 0.5;
 
-    this.RidesBtn = this.add.image(600, 250, "Rides");
+    this.RidesBtn = this.add.image(630, 200, "Rides").setScale(1.7,1.7);
     this.RidesBtn.alpha = 0.5;
 
     // navigate to the food store scene
@@ -77,8 +77,8 @@ class HomePage extends Phaser.Scene {
   createGameProgressUI(target) {
     let starIcons = [];
     var maxStars = 10;
-    var widthSpace = 70;
-    var xStartOffset = 80;
+    var widthSpace = 60;
+    var xStartOffset = 125;
     var yStartOffset = 50;
 
     for (var index = 0; index < maxStars; ++index) {
@@ -123,6 +123,37 @@ class HomePage extends Phaser.Scene {
     }
   }
 
+ /*******************************************/
+  // spawn hidden star and fly over to next slot and increase global score
+  /*******************************************/
+  attainStar(spawnX, spawnY, hiddenStar, ownerScene, callback) {
+
+    hiddenStar.x = spawnX;
+    hiddenStar.y = spawnY;
+    hiddenStar.visible = true;
+
+    // pulse
+    ownerScene.add.tween({
+      targets: hiddenStar,
+      scaleX: 1.3,
+      scaleY: 1.3,
+      duration: 100,
+      delay: 600,
+      yoyo: true
+    });
+
+    // fly up to star bar, specifically the next star
+    ownerScene.add.tween({
+      targets: hiddenStar,
+      duration: 420,
+      y: ownerScene.starIcons[g_Score].y,
+      x: ownerScene.starIcons[g_Score].x,
+      delay: 920,
+      onCompleteScope: ownerScene,
+      onComplete: callback
+    });
+  }
+
   /*******************************************/
   // Create Home Btn, timer bar, game over splash etc
   /*******************************************/
@@ -131,7 +162,7 @@ class HomePage extends Phaser.Scene {
     ownerScene.starIcons = this.createGameProgressUI(ownerScene);
 
     // create timer bar
-    var timerBarBase = ownerScene.add.image(config.width / 2 - 100, 150, "TimerBar").setOrigin(0, 0.5);
+    var timerBarBase = ownerScene.add.image(config.width / 2 - 150, 120, "TimerBar").setOrigin(0, 0.5);
     ownerScene.timerBarContent = ownerScene.add.image(timerBarBase.x + 53, timerBarBase.y, "TimerBarContent").setOrigin(0, 0.5);
     ownerScene.gameTimer = ownerScene.time.delayedCall(g_LevelTime, ownerScene.onTimerExpired, [], ownerScene);
     
@@ -146,9 +177,9 @@ class HomePage extends Phaser.Scene {
     ownerScene.gameOverSplash = ownerScene.add.image(config.width / 2, -300, "GameOverSplash");
 
     // home btn over splash screen
-    ownerScene.homeBtn = ownerScene.add.image(config.width/2, config.height/2, "HomeBtn");
+    ownerScene.homeBtn = ownerScene.add.image(config.width/2, config.height/2 + 100, "HomeBtn");
     ownerScene.homeBtn.alpha = 0.0;
-    ownerScene.homeBtn.once('pointerup', () => ownerScene.scene.start('HomePage'));
+    ownerScene.homeBtn.once('pointerup', this.buttonAnimEffect.bind(ownerScene, ownerScene.homeBtn, () => ownerScene.scene.start('HomePage')));
 
     // mark this scene as visited
     ownerScene.visited = true;
@@ -159,7 +190,12 @@ class HomePage extends Phaser.Scene {
   /*******************************************/
   gameOver(ownerScene) {
 
+    // due to dragging we need to rearrage the summary box to show up on top
     ownerScene.maskUnderlay.visible = true;
+    ownerScene.children.bringToTop(ownerScene.maskUnderlay);
+
+    ownerScene.children.bringToTop(ownerScene.gameOverSplash);
+    ownerScene.children.bringToTop(ownerScene.homeBtn);
 
     // fade in the mask underlay
     ownerScene.add.tween({
