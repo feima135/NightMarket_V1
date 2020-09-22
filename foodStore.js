@@ -7,10 +7,11 @@ class FoodStoreScene extends Phaser.Scene {
   }
 
   create() {
-
     // declare this choices array first!
     this.foodItemChoices = [];
     this.foodItemSprites = [];
+    this.foodItemVoiceOverSFXTable = ["Eat_Sausage_SFX", "Eat_Popcorn_SFX", "Eat_Drink_SFX", 
+                                      "Eat_CandyFloss_SFX", "Eat_ChickenWing_SFX", "Eat_SkeweredMeat_SFX"];
 
     // Create food Store BG
     var BG = this.add.image(config.width / 2, config.height / 2, "FoodStoreBG");
@@ -28,7 +29,10 @@ class FoodStoreScene extends Phaser.Scene {
     this.CrossX.visible = false;
 
     // chat bubble
-    this.add.image(this.FoodCustomer.x + 230, this.FoodCustomer.y - 50, "ChatBubble");
+    let chatBubble = this.add.image(this.FoodCustomer.x + 230, this.FoodCustomer.y - 50, "ChatBubble").setScale(1.2, 1.05);
+
+    // audio button
+    this.audioBtn = this.add.image(chatBubble.x + 120, chatBubble.y + 60, "AudioButton").setScale(0.7, 0.7).setInteractive();
 
     // load customer request array
     this.customerRequest = this.add.sprite(530, config.height - 180, "FoodItemsWord");
@@ -68,6 +72,9 @@ class FoodStoreScene extends Phaser.Scene {
       this.foodItemChoices.push(index);
     }
 
+    // After creating the food items we register the audio voice over
+    this.audioBtn.on('pointerdown', this.scene.get('HomePage').buttonAnimEffect.bind(this, this.audioBtn, () => this.sound.play(this.foodItemSprites[this.customerChoice].voiceOver)));
+
     // create a hidden star
     this.hiddenStar = this.add.image(0, 0, "StarIcon");
     this.hiddenStar.visible = false;
@@ -94,6 +101,7 @@ class FoodStoreScene extends Phaser.Scene {
     foodItem.initialSpriteFrame = spriteSheetIterStart;
     foodItem.sceneOwner = this;
     foodItem.eatenFlag = false;
+    foodItem.voiceOver = this.foodItemVoiceOverSFXTable[foodItemIndex];
 
     this.foodItemSprites.push(foodItem);
 
@@ -223,6 +231,17 @@ class FoodStoreScene extends Phaser.Scene {
 
     // EATEN!
     if (gameObject.foodItemID == this.customerChoice) {
+
+      this.sound.play('Correct_SFX');
+
+      // hard coded for drinks
+      if (gameObject.foodItemID == 2) {
+        this.sound.play('Drink_SFX');
+      }
+      else {
+        this.sound.play('Eat_SFX');
+      }
+
       gameObject.play(gameObject.eatenAnim);
       gameObject.disableInteractive();
       gameObject.eatenFlag = true;
@@ -235,6 +254,8 @@ class FoodStoreScene extends Phaser.Scene {
     }
     // wrong answer!
     else {
+      this.sound.play('Wrong_SFX');
+
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
 
@@ -261,6 +282,7 @@ class FoodStoreScene extends Phaser.Scene {
 
   onAttainedStar()
   {
+    this.sound.play("CollectStar_SFX");
     this.hiddenStar.visible = false;
     this.scene.get("HomePage").increaseGlobalScore(this);
   }

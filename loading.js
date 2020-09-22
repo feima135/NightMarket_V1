@@ -57,6 +57,7 @@ class LoadingScene extends Phaser.Scene {
     this.load.image('HomeBtn', 'assets/HomeBtn.png');
     this.load.image('StarIcon', 'assets/StarIcon.png');
     this.load.image('StarIconBase', 'assets/StarIconEmptyBase.png');
+    this.load.image('AudioButton', 'assets/AudioButton.png');
 
     // Food Store
     this.load.image('FoodStoreBG', 'assets/FoodStoreScene/FoodStoreBG.png');
@@ -72,9 +73,29 @@ class LoadingScene extends Phaser.Scene {
 
     // Carnival Games
     this.load.image('CarnivalGamesStore', 'assets/CarnivalGames/CarnivalGamesStore.png');
+    this.load.image('ShootBalloonWord', 'assets/CarnivalGames/ShootBalloonWord.png');
+    this.load.image('RingTossWord', 'assets/CarnivalGames/RingTossWord.png');
     this.load.image('TossBottleStatic', 'assets/CarnivalGames/TossBottleStatic.png');
-    this.load.spritesheet('BalloonSprites', 'assets/CarnivalGames/BalloonSprites.png', { frameWidth: 128, frameHeight: 128 });
-    this.load.spritesheet('TossRings', 'assets/CarnivalGames/TossRings.png', { frameWidth: 60, frameHeight: 213 });
+    this.load.spritesheet('BalloonSprites', 'assets/CarnivalGames/BalloonSprites.png', { frameWidth: 96, frameHeight: 96 });
+    this.load.spritesheet('TossRings', 'assets/CarnivalGames/TossRings.png', { frameWidth: 36, frameHeight: 128 });
 
+    // audio
+    this.load.audio('LevelComplete_SFX', 'assets/Audio/LevelComplete.mp3');
+    this.load.audio('Correct_SFX', 'assets/Audio/Correct.wav');
+    this.load.audio('Wrong_SFX', 'assets/Audio/Wrong.wav');
+    this.load.audio('Eat_SFX', 'assets/Audio/Eat.wav');
+    this.load.audio('Drink_SFX', 'assets/Audio/DrinkStraw.wav');
+    this.load.audio('CollectStar_SFX', 'assets/Audio/CollectStar.mp3');
+    this.load.audio('ButtonClick_SFX', 'assets/Audio/ButtonClick.wav');
+    this.load.audio('BalloonPop_SFX', 'assets/Audio/BalloonPop.wav');
+    this.load.audio('RingTossBottle_SFX', 'assets/Audio/RingTossBottle.wav');
+    this.load.audio('Eat_Sausage_SFX', 'assets/Audio/Eat_Sausage.mp3');
+    this.load.audio('Eat_Popcorn_SFX', 'assets/Audio/Eat_Popcorn.mp3');
+    this.load.audio('Eat_Drink_SFX', 'assets/Audio/Eat_Drink.mp3');
+    this.load.audio('Eat_CandyFloss_SFX', 'assets/Audio/Eat_CandyFloss.mp3');
+    this.load.audio('Eat_ChickenWing_SFX', 'assets/Audio/Eat_ChickenWing.mp3');
+    this.load.audio('Eat_SkeweredMeat_SFX', 'assets/Audio/Eat_SkeweredMeat.mp3');
+    this.load.audio('ShootBalloonWord_SFX', 'assets/Audio/ShootBalloonWord.mp3');
+    this.load.audio('RingTossGameWord_SFX', 'assets/Audio/RingTossGameWord.mp3');
   }
 }

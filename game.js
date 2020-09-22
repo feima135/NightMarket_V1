@@ -11,6 +11,8 @@ class HomePage extends Phaser.Scene {
   }
 
   create() {
+
+    this.sound.add('ButtonClick_SFX');
     this.add.image(config.width / 2, config.height / 2, "HomePageBG");
 
     this.FoodStoreBtn = this.add.image(130, 380, "FoodStore").setScale(0.7,0.7);
@@ -33,9 +35,6 @@ class HomePage extends Phaser.Scene {
       this.CarnivalGamesBtn.alpha = 1.0;
       this.CarnivalGamesBtn.setInteractive();
       this.CarnivalGamesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.CarnivalGamesBtn, () => this.scene.start('CarnivalGamesScene')));
-
-      this.RidesBtn.setInteractive();
-      this.RidesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.RidesBtn, () => this.scene.start('RidesScene')));
     }
 
     if (!this.scene.get("RidesScene").visited) {
@@ -52,14 +51,18 @@ class HomePage extends Phaser.Scene {
   // Generic Btn Click Effect
   /***************************/
   buttonAnimEffect(img, callback) {
+
+    console.log(img);
     this.tweens.add({
       targets: img,
-      scaleX: 1.1,
-      scaleY: 1.1,
-      duration: 40,
+      scaleX: img.scaleY * 1.2,
+      scaleY: img.scaleX * 1.2,
+      duration: 80,
       onComplete: callback,
       yoyo: true
     });
+
+    this.sound.play('ButtonClick_SFX');
   }
 
   /************************************/
@@ -190,6 +193,7 @@ class HomePage extends Phaser.Scene {
   /*******************************************/
   gameOver(ownerScene) {
 
+    ownerScene.sound.play("LevelComplete_SFX");
     // due to dragging we need to rearrage the summary box to show up on top
     ownerScene.maskUnderlay.visible = true;
     ownerScene.children.bringToTop(ownerScene.maskUnderlay);

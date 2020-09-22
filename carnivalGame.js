@@ -14,8 +14,18 @@ class CarnivalGamesScene extends Phaser.Scene {
     this.ringTossed = 0;
 
     // store BG
-    //this.add.image(180, config.height - 220, "CarnivalGamesStore");
-    //this.add.image(620, config.height - 220, "CarnivalGamesStore");
+    this.add.image(200, config.height - 220, "CarnivalGamesStore");
+    this.add.image(600, config.height - 220, "CarnivalGamesStore");
+
+    // prepare store name wording
+    let shootBalloonWord = this.add.image(200, config.height - 415, "ShootBalloonWord");
+    let ringTossWord = this.add.image(600, config.height - 415, "RingTossWord");
+
+    let shootBalloonWordAudioBtn = this.add.image(shootBalloonWord.x + 120, shootBalloonWord.y, "AudioButton").setScale(0.6, 0.6).setInteractive();
+    shootBalloonWordAudioBtn.on('pointerdown', this.scene.get('HomePage').buttonAnimEffect.bind(this, shootBalloonWordAudioBtn, () => this.sound.play('ShootBalloonWord_SFX')));
+  
+    let ringTossWordAudioBtn = this.add.image(ringTossWord.x + 120, ringTossWord.y, "AudioButton").setScale(0.6, 0.6).setInteractive();
+    ringTossWordAudioBtn.on('pointerdown', this.scene.get('HomePage').buttonAnimEffect.bind(this, ringTossWordAudioBtn, () => this.sound.play('RingTossGameWord_SFX')));
 
     // prepare rng indices
     let tempBufferBalloonsArray = [];
@@ -39,10 +49,10 @@ class CarnivalGamesScene extends Phaser.Scene {
   createTossBottles() {
     let maxRow = 2;
     let maxCol = 4;
-    let starPosX = 480;
-    let starPosY = 300;
+    let starPosX = 490;
+    let starPosY = 350;
     let xGap = 80;
-    let yGap = 200;
+    let yGap = 125;
     this.totalTossBottles = maxRow * maxCol;
 
     // create a grid of ring toss
@@ -61,7 +71,7 @@ class CarnivalGamesScene extends Phaser.Scene {
         tossBottle.hiddenStar = hiddenStar;
 
         // attach some toss rings
-        var tossRing = this.add.sprite(currPosX, currPosY - 90,"TossRings");
+        var tossRing = this.add.sprite(currPosX, currPosY - 60,"TossRings");
         tossRing.visible = false;
         tossBottle.tossRing = tossRing;
 
@@ -82,10 +92,10 @@ class CarnivalGamesScene extends Phaser.Scene {
 
     let maxRow = 2;
     let maxCol = 4;
-    let balloonStartPosX = 50;
-    let balloonStartPosY = 300;
-    let xGap = 90;
-    let yGap = 150;
+    let balloonStartPosX = 80;
+    let balloonStartPosY = 350;
+    let xGap = 80;
+    let yGap = 120;
     this.totalBalloons = maxRow * maxCol;
 
     let maxFrames = 6;
@@ -126,8 +136,20 @@ class CarnivalGamesScene extends Phaser.Scene {
   }
 
   onTossBottlePressed() {
+
+    this.owner.sound.play('RingTossBottle_SFX');
+
     this.targetSprite.tossRing.visible = true;
     this.targetSprite.tossRing.play("tossRingToBottle");
+
+    // simple scale click effect
+    this.owner.add.tween({
+      targets: this.targetSprite,
+      scaleX: 1.22,
+      scaleY: 1.22,
+      duration: 75,
+      yoyo: true
+    });
 
     // update counter scores
     ++this.owner.ringTossed;
@@ -159,6 +181,7 @@ class CarnivalGamesScene extends Phaser.Scene {
           targetFlyOverStar.destroy();
           this.scene.get("HomePage").increaseGlobalScore(this);
           this.checkGameOverCondition();
+          this.sound.play('CollectStar_SFX');
         }
       });
     }
@@ -166,8 +189,20 @@ class CarnivalGamesScene extends Phaser.Scene {
 
   // when balloon is pressed, play explosion 
   onBalloonPressed() {
+
+    this.owner.sound.play('BalloonPop_SFX');
+
     this.targetSprite.play(this.targetSprite.explodeAnim);
     this.targetSprite.on('animationcomplete', () => this.targetSprite.destroy());
+
+    // simple scale click effect
+    this.owner.add.tween({
+      targets: this.targetSprite,
+      scaleX: 1.22,
+      scaleY: 1.22,
+      duration: 75,
+      yoyo: true
+    });
 
     // update counter scores
     ++this.owner.balloonExploded;
@@ -199,6 +234,7 @@ class CarnivalGamesScene extends Phaser.Scene {
           targetFlyOverStar.destroy();
           this.scene.get("HomePage").increaseGlobalScore(this);
           this.checkGameOverCondition();
+          this.sound.play('CollectStar_SFX');
         }
       });
     }
