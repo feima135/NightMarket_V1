@@ -13,6 +13,8 @@ class CarnivalGamesScene extends Phaser.Scene {
     this.balloonExploded = 0;
     this.ringTossed = 0;
 
+    this.add.image(config.width / 2, config.height / 2, "HomePageBG");
+
     // store BG
     this.add.image(200, config.height - 220, "CarnivalGamesStore");
     this.add.image(600, config.height - 220, "CarnivalGamesStore");

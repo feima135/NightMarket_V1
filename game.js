@@ -11,17 +11,15 @@ class HomePage extends Phaser.Scene {
   }
 
   create() {
-
-    this.sound.add('ButtonClick_SFX');
     this.add.image(config.width / 2, config.height / 2, "HomePageBG");
 
-    this.FoodStoreBtn = this.add.image(130, 380, "FoodStore").setScale(0.7,0.7);
+    this.FoodStoreBtn = this.add.image(130, 430, "FoodStore").setScale(0.7,0.7);
     this.FoodStoreBtn.alpha = 0.5;
 
-    this.CarnivalGamesBtn = this.add.image(350, 200, "CarnivalGames").setScale(0.7,0.7);
+    this.CarnivalGamesBtn = this.add.image(400, 210, "CarnivalGames").setScale(0.7,0.7);
     this.CarnivalGamesBtn.alpha = 0.5;
 
-    this.RidesBtn = this.add.image(630, 200, "Rides").setScale(1.7,1.7);
+    this.RidesBtn = this.add.image(650, 430, "Rides").setScale(1.7,1.7);
     this.RidesBtn.alpha = 0.5;
 
     // navigate to the food store scene
@@ -51,8 +49,6 @@ class HomePage extends Phaser.Scene {
   // Generic Btn Click Effect
   /***************************/
   buttonAnimEffect(img, callback) {
-
-    console.log(img);
     this.tweens.add({
       targets: img,
       scaleX: img.scaleY * 1.2,
@@ -129,11 +125,17 @@ class HomePage extends Phaser.Scene {
  /*******************************************/
   // spawn hidden star and fly over to next slot and increase global score
   /*******************************************/
-  attainStar(spawnX, spawnY, hiddenStar, ownerScene, callback) {
+  attainStar(spawnX, spawnY, hiddenStar, ownerScene, startDelay) {
 
     hiddenStar.x = spawnX;
     hiddenStar.y = spawnY;
     hiddenStar.visible = true;
+
+    let flyDelay = 920;
+    if(!startDelay)
+    {
+      flyDelay = 0;
+    }
 
     // pulse
     ownerScene.add.tween({
@@ -151,9 +153,14 @@ class HomePage extends Phaser.Scene {
       duration: 420,
       y: ownerScene.starIcons[g_Score].y,
       x: ownerScene.starIcons[g_Score].x,
-      delay: 920,
+      delay: flyDelay,
       onCompleteScope: ownerScene,
-      onComplete: callback
+      onComplete: function() 
+      {
+        ownerScene.sound.play("CollectStar_SFX");
+        hiddenStar.visible = false;
+        ownerScene.scene.get("HomePage").increaseGlobalScore(ownerScene);
+      }
     });
   }
 

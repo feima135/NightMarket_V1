@@ -34,13 +34,10 @@ class LoadingScene extends Phaser.Scene {
 
     percentage = percentage * 100;
     this.loadingText.setText("Loading: " + percentage.toFixed(2) + "%");
-    console.log("P:" + percentage);
   }
 
   // when load completes
   loadCompleted() {
-    console.log('complete');
-
     // go to home page
     this.scene.start('HomePage');
   }
@@ -79,13 +76,26 @@ class LoadingScene extends Phaser.Scene {
     this.load.spritesheet('BalloonSprites', 'assets/CarnivalGames/BalloonSprites.png', { frameWidth: 96, frameHeight: 96 });
     this.load.spritesheet('TossRings', 'assets/CarnivalGames/TossRings.png', { frameWidth: 36, frameHeight: 128 });
 
+    // Rides
+    this.load.image('FerrisWheel_Base', 'assets/Rides/FerrisWheel_Base.png');
+    this.load.image('FerrisWheel_Carriage', 'assets/Rides/FerrisWheel_Carriage.png');
+    this.load.image('FerrisWheel_Wheel', 'assets/Rides/FerrisWheel_Wheel.png');
+    this.load.image('FerrisWheelWord', 'assets/Rides/FerrisWheel_Word.png');
+    this.load.image('Train', 'assets/Rides/Train.png');
+    this.load.image('TrainWheels', 'assets/Rides/TrainWheels.png');
+    this.load.image('TrainWord', 'assets/Rides/Train_Word.png');
+    this.load.image('BumperCarWord', 'assets/Rides/BumperCar_Word.png');
+    this.load.image('FlyingChairWord', 'assets/Rides/FlyingChair_Word.png');
+    this.load.image('BumperCar_A', 'assets/Rides/BumperCar_A.png');
+    this.load.image('BumperCar_B', 'assets/Rides/BumperCar_B.png');
+
     // audio
     this.load.audio('LevelComplete_SFX', 'assets/Audio/LevelComplete.mp3');
     this.load.audio('Correct_SFX', 'assets/Audio/Correct.wav');
     this.load.audio('Wrong_SFX', 'assets/Audio/Wrong.wav');
     this.load.audio('Eat_SFX', 'assets/Audio/Eat.wav');
     this.load.audio('Drink_SFX', 'assets/Audio/DrinkStraw.wav');
-    this.load.audio('CollectStar_SFX', 'assets/Audio/CollectStar.mp3');
+    this.load.audio('CollectStar_SFX', 'assets/Audio/CollectStar.wav');
     this.load.audio('ButtonClick_SFX', 'assets/Audio/ButtonClick.wav');
     this.load.audio('BalloonPop_SFX', 'assets/Audio/BalloonPop.wav');
     this.load.audio('RingTossBottle_SFX', 'assets/Audio/RingTossBottle.wav');
@@ -97,5 +107,9 @@ class LoadingScene extends Phaser.Scene {
     this.load.audio('Eat_SkeweredMeat_SFX', 'assets/Audio/Eat_SkeweredMeat.mp3');
     this.load.audio('ShootBalloonWord_SFX', 'assets/Audio/ShootBalloonWord.mp3');
     this.load.audio('RingTossGameWord_SFX', 'assets/Audio/RingTossGameWord.mp3');
+    this.load.audio('FerrisWheelWord_SFX', 'assets/Audio/Ride_FerrisWheel.mp3');
+    this.load.audio('TrainWord_SFX', 'assets/Audio/Ride_Train.mp3');
+    this.load.audio('BumperCar_SFX', 'assets/Audio/Ride_BumperCar.mp3');
+    this.load.audio('FlyingSwing_SFX', 'assets/Audio/Ride_FlyingSwing.mp3');
   }
 }

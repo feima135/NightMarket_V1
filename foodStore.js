@@ -247,7 +247,7 @@ class FoodStoreScene extends Phaser.Scene {
       gameObject.eatenFlag = true;
 
       // fly star
-      this.scene.get("HomePage").attainStar(this.FoodCustomer.x, this.FoodCustomer.y + 50, this.hiddenStar, this, this.onAttainedStar);
+      this.scene.get("HomePage").attainStar(this.FoodCustomer.x, this.FoodCustomer.y + 50, this.hiddenStar, this, true);
 
       // call this after duration
       this.setupNextRound(1300);
@@ -273,18 +273,9 @@ class FoodStoreScene extends Phaser.Scene {
           this.CrossX.visible = false;
         }
       });
-
-
       this.FoodCustomer.setTexture('FoodCustomerIdle');
       this.resetAllFoodItemsInteractive();
     }
-  }
-
-  onAttainedStar()
-  {
-    this.sound.play("CollectStar_SFX");
-    this.hiddenStar.visible = false;
-    this.scene.get("HomePage").increaseGlobalScore(this);
   }
 
   // drop zone hover
