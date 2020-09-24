@@ -154,6 +154,9 @@ class FoodStoreScene extends Phaser.Scene {
       else {
         this.customerChoice = Phaser.Utils.Array.RemoveRandomElement(this.foodItemChoices);
         this.customerRequest.setFrame(this.customerChoice);
+
+        // play the audio right away
+        this.sound.play(this.foodItemSprites[this.customerChoice].voiceOver);
       }
     }, waitDelay);
   }

@@ -55,6 +55,9 @@ class LoadingScene extends Phaser.Scene {
     this.load.image('StarIcon', 'assets/StarIcon.png');
     this.load.image('StarIconBase', 'assets/StarIconEmptyBase.png');
     this.load.image('AudioButton', 'assets/AudioBtn.png');
+    this.load.image('MultiplyIcon', 'assets/MultiplyIcon.png');
+    this.load.spritesheet('Numbers', 'assets/Numbers.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('Fireworks', 'assets/Fireworks.png', { frameWidth: 64, frameHeight: 64 });
 
     // Food Store
     this.load.image('FoodStoreBG', 'assets/FoodStoreScene/FoodStoreBG.png');
@@ -114,5 +117,10 @@ class LoadingScene extends Phaser.Scene {
     this.load.audio('TrainWord_SFX', 'assets/Audio/Ride_Train.mp3');
     this.load.audio('BumperCar_SFX', 'assets/Audio/Ride_BumperCar.mp3');
     this.load.audio('SwingChair_SFX', 'assets/Audio/Ride_SwingChair.mp3');
+
+    this.load.audio('FoodStoresWord_SFX', 'assets/Audio/FoodStoresWord.mp3');
+    this.load.audio('CarnivalGamesWord_SFX', 'assets/Audio/CarnivalGamesWord.mp3');
+    this.load.audio('RidesWord_SFX', 'assets/Audio/RidesWord.mp3');
+    this.load.audio('CombinedCelebration_SFX', 'assets/Audio/CombinedCelebration.mp3');
   }
 }

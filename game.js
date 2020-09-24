@@ -22,48 +22,124 @@ class HomePage extends Phaser.Scene {
     this.RidesBtn = this.add.image(635, 380, "Rides");
     this.RidesBtn.alpha = 0.5;
 
-    // Create for when entire game is over
-    this.maskUnderlay = this.add.image(config.width / 2, config.height / 2, "WhiteBox").setScale(config.width, config.height);
-    this.maskUnderlay.tint = 0x000000;
-    this.maskUnderlay.alpha = 0.0;
-    this.maskUnderlay.visible = false;
-    this.maskUnderlay.setInteractive();
-    this.gameOverSplash = this.add.image(config.width / 2, -300, "GameOverSplash");
-
     // navigate to the food store scene
     if (!this.scene.get("FoodStoreScene").visited) {
       this.FoodStoreBtn.alpha = 1.0;
       this.FoodStoreBtn.setInteractive();
-      this.FoodStoreBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.FoodStoreBtn, () => this.scene.start('FoodStoreScene')));
+      this.FoodStoreBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.FoodStoreBtn, () => {
+        this.sound.play("FoodStoresWord_SFX"); 
+        this.time.delayedCall(700, function () { this.scene.start('FoodStoreScene'); }, [], this);       
+      }));
     }
 
     if (!this.scene.get("CarnivalGamesScene").visited) {
       this.CarnivalGamesBtn.alpha = 1.0;
       this.CarnivalGamesBtn.setInteractive();
-      this.CarnivalGamesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.CarnivalGamesBtn, () => this.scene.start('CarnivalGamesScene')));
+      this.CarnivalGamesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.CarnivalGamesBtn, () => {
+        this.sound.play("CarnivalGamesWord_SFX"); 
+        this.scene.start('CarnivalGamesScene');
+      }));
     }
 
     if (!this.scene.get("RidesScene").visited) {
       this.RidesBtn.alpha = 1.0;
       this.RidesBtn.setInteractive();
-      this.RidesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.RidesBtn, () => this.scene.start('RidesScene')));
+      this.RidesBtn.once('pointerdown', this.buttonAnimEffect.bind(this, this.RidesBtn, () => {
+        this.sound.play("RidesWord_SFX"); 
+        this.scene.start('RidesScene');
+      }));
     }
 
     this.starIcons = this.createGameProgressUI(this);
     this.updateGameProgressUI(this.starIcons);
 
-    if(this.scene.get("FoodStoreScene").visited && this.scene.get("CarnivalGamesScene").visited && this.scene.get("RidesScene").visited)
-    {
+    if (this.checkEntireGameOverCondition()) {
+
+      // Create for when entire game is over
+      this.maskUnderlay = this.add.image(config.width / 2, config.height / 2, "WhiteBox").setScale(config.width, config.height);
+      this.maskUnderlay.tint = 0x000000;
+      this.maskUnderlay.alpha = 0.0;
+      this.maskUnderlay.visible = false;
+      this.maskUnderlay.setInteractive();
+      this.gameOverSplash = this.add.image(config.width / 2, -300, "GameOverSplash");
+      this.multiplyIcon = this.add.image(config.width / 2, config.height / 2 + 50, "MultiplyIcon");
+      this.summaryStarIcon = this.add.image(config.width / 2 - 50, config.height / 2 + 50, "StarIcon");
+      this.numberSprite = this.add.sprite(config.width / 2 + 50, config.height / 2 + 50, "Numbers");
+      this.multiplyIcon.visible = false;
+      this.summaryStarIcon.visible = false;
+      this.numberSprite.visible = false;
+
+      this.starIconScaleTween = this.add.tween({
+        targets: this.summaryStarIcon,
+        scaleX: 1.12,
+        scaleY: 1.12,
+        duration: 200,
+        yoyo: true,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: "SummaryCountScoreAnim",
+        frames: this.anims.generateFrameNumbers('Numbers',
+          { start: 0, end: g_Score }),
+        frameRate: 10
+      });
+
+      this.numberSprite.on('animationcomplete', this.rollupSummaryComplete, this);
+
+      this.anims.create({
+        key: "FireworksEmit",
+        frames: this.anims.generateFrameNumbers('Fireworks',
+          { start: 0, end: 30 }),
+        frameRate: 20,
+        repeat: -1
+      });
+
+      // create fireworks
+      this.fireworksArray = [];
+      for (var index = 0; index < 5; ++index) {
+        let fireworksSprite = this.add.sprite(Phaser.Math.Between(0, config.width), Phaser.Math.Between(0, config.height), "Fireworks");
+        fireworksSprite.setScale(2.5);
+        this.fireworksArray.push(fireworksSprite);
+      }
+
       this.entireGameOver();
     }
   }
 
+  rollupSummaryComplete()
+  {
+    this.starIconScaleTween.stop();
+  }
+
+  checkEntireGameOverCondition()
+  {
+    return this.scene.get("FoodStoreScene").visited && this.scene.get("CarnivalGamesScene").visited && this.scene.get("RidesScene").visited;
+    //return true;
+  }
+
   entireGameOver() {
+    this.sound.play("CombinedCelebration_SFX");   
     this.sound.play("LevelComplete_SFX");
+
     // due to dragging we need to rearrage the summary box to show up on top
     this.maskUnderlay.visible = true;
     this.children.bringToTop(this.maskUnderlay);
     this.children.bringToTop(this.gameOverSplash);
+    this.children.bringToTop(this.multiplyIcon);
+    this.children.bringToTop(this.summaryStarIcon);
+    this.children.bringToTop(this.numberSprite);
+
+    for (var index = 0; index < this.fireworksArray.length; ++index) {
+      
+      let targetFireworkSprite = this.fireworksArray[index];
+      targetFireworkSprite.visible = false;
+      // random delay call
+      this.time.delayedCall(index * 1000, function() { targetFireworkSprite.visible = true;
+        targetFireworkSprite.play("FireworksEmit");}, [], targetFireworkSprite);
+
+      this.children.bringToTop(this.fireworksArray[index]);
+    }
 
     // fade in the mask underlay
     this.add.tween({
@@ -77,6 +153,14 @@ class HomePage extends Phaser.Scene {
       targets: this.gameOverSplash,
       y: config.height / 2,
       ease: "Quad.easeInOut",
+      onCompleteScope: this,
+      onComplete: function() 
+      { 
+        this.multiplyIcon.visible = true;
+        this.summaryStarIcon.visible = true;
+        this.numberSprite.visible = true;
+        this.numberSprite.play("SummaryCountScoreAnim");
+      },
       duration: 1000
     });
   }
