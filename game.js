@@ -1,6 +1,6 @@
 // global score
 var g_Score = 0;
-var g_LevelTime = 50000; // how long for each level in ms
+var g_LevelTime = 60000; // how long for each level in ms
 
 /////////////////
 // HOME PAGE

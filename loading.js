@@ -88,6 +88,9 @@ class LoadingScene extends Phaser.Scene {
     this.load.image('FlyingChairWord', 'assets/Rides/FlyingChair_Word.png');
     this.load.image('BumperCar_A', 'assets/Rides/BumperCar_A.png');
     this.load.image('BumperCar_B', 'assets/Rides/BumperCar_B.png');
+    this.load.image('SwingChair', 'assets/Rides/SwingChair.png');
+    this.load.image('SwingChair_BaseAnchor', 'assets/Rides/SwingChair_BaseAnchor.png');
+    this.load.spritesheet('SwingChair_Header', 'assets/Rides/SwingChair_Header.png', { frameWidth: 123, frameHeight: 57 });
 
     // audio
     this.load.audio('LevelComplete_SFX', 'assets/Audio/LevelComplete.mp3');
