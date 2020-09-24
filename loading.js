@@ -85,7 +85,7 @@ class LoadingScene extends Phaser.Scene {
     this.load.image('TrainWheels', 'assets/Rides/TrainWheels.png');
     this.load.image('TrainWord', 'assets/Rides/Train_Word.png');
     this.load.image('BumperCarWord', 'assets/Rides/BumperCar_Word.png');
-    this.load.image('FlyingChairWord', 'assets/Rides/FlyingChair_Word.png');
+    this.load.image('SwingChairWord', 'assets/Rides/SwingChair_Word.png');
     this.load.image('BumperCar_A', 'assets/Rides/BumperCar_A.png');
     this.load.image('BumperCar_B', 'assets/Rides/BumperCar_B.png');
     this.load.image('SwingChair', 'assets/Rides/SwingChair.png');
@@ -113,6 +113,6 @@ class LoadingScene extends Phaser.Scene {
     this.load.audio('FerrisWheelWord_SFX', 'assets/Audio/Ride_FerrisWheel.mp3');
     this.load.audio('TrainWord_SFX', 'assets/Audio/Ride_Train.mp3');
     this.load.audio('BumperCar_SFX', 'assets/Audio/Ride_BumperCar.mp3');
-    this.load.audio('FlyingSwing_SFX', 'assets/Audio/Ride_FlyingSwing.mp3');
+    this.load.audio('SwingChair_SFX', 'assets/Audio/Ride_SwingChair.mp3');
   }
 }

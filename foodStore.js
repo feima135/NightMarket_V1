@@ -21,7 +21,7 @@ class FoodStoreScene extends Phaser.Scene {
     BG.setScale(scale);
 
     // load customer first
-    this.FoodCustomer = this.add.image(300, config.height - 100, "FoodCustomerIdle");
+    this.FoodCustomer = this.add.image(250, config.height - 100, "FoodCustomerIdle");
     this.FoodCustomer.setInteractive();
 
     // create the wrong answer x icon
@@ -29,13 +29,13 @@ class FoodStoreScene extends Phaser.Scene {
     this.CrossX.visible = false;
 
     // chat bubble
-    let chatBubble = this.add.image(this.FoodCustomer.x + 230, this.FoodCustomer.y - 50, "ChatBubble").setScale(1.2, 1.05);
+    let chatBubble = this.add.image(this.FoodCustomer.x + 260, this.FoodCustomer.y - 50, "ChatBubble").setScale(1.2, 1.05);
 
     // audio button
     this.audioBtn = this.add.image(chatBubble.x + 120, chatBubble.y + 60, "AudioButton").setScale(0.7, 0.7).setInteractive();
 
     // load customer request array
-    this.customerRequest = this.add.sprite(530, config.height - 180, "FoodItemsWord");
+    this.customerRequest = this.add.sprite(500, config.height - 180, "FoodItemsWord");
 
     // //  A drop zone for customer
     var zone = this.add.zone(this.FoodCustomer.x, this.FoodCustomer.y, 450, 300).setRectangleDropZone(300, 250);
@@ -286,6 +286,9 @@ class FoodStoreScene extends Phaser.Scene {
   // drop zone leave
   onItemDropZoneLeave(pointer, gameObject, dropZone) {
     this.FoodCustomer.setTexture('FoodCustomerIdle');
+  }
+
+  checkGameOverCondition() {
   }
 
   update() {

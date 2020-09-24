@@ -8,6 +8,10 @@ class RidesScene extends Phaser.Scene {
     super('RidesScene')
     this.ferrisWheelRotSpeed = 0.005;
     this.bumperCarSpeed = 4500;
+
+    // hard coded tired
+    this.starsToCollect = 4;
+
   }
 
   create() {
@@ -40,40 +44,66 @@ class RidesScene extends Phaser.Scene {
 
     swingChairHeader.play("SwingChairHeaderAnim");
 
-    // // how far away are the chairs from centerPt
-    // let radius = 10;
+    // how far away are the chairs from centerPt
+    let radius = 10;
 
-    // // how much to rotate from extreme left to extreme right
-    // var maxChairSwingRotSpan = 80;
+    // how much to rotate from extreme left to extreme right
+    var maxChairSwingRotSpan = 100;
 
-    // // how many chairs
-    // var maxSwingChairCount = 4;
+    // how many chairs
+    var maxSwingChairCount = 4;
 
-    // // angle diff between each chair
-    // var angleSpacing = maxChairSwingRotSpan / maxSwingChairCount;
+    // angle diff between each chair
+    var angleSpacing = maxChairSwingRotSpan / maxSwingChairCount;
 
-    // let centerPt = new Phaser.Math.Vector2(swingChairHeader.x, swingChairHeader.y);
-    // let currChairPos = centerPt.add(Phaser.Math.Vector2.DOWN.scale(radius));
-    // let startIndex = -(maxSwingChairCount / 2);
+    let centerPt = new Phaser.Math.Vector2(swingChairHeader.x, swingChairHeader.y);
+    let currChairPos = centerPt.add(Phaser.Math.Vector2.DOWN.scale(radius));
+    let startIndex = -(maxSwingChairCount / 2);
 
-    // // creat the swing chairs
-    // for (var index = startIndex; index <= maxSwingChairCount / 2; ++index) {
-    //   let swingChair = this.add.image(swingChairHeader.x, swingChairHeader.y, "SwingChair");
-    //   swingChair.setOrigin(0.5, -0.5);
+    // creat the swing chairs
+    for (var index = startIndex; index <= maxSwingChairCount / 2; ++index) {
+      let swingChair = this.add.image(swingChairHeader.x, swingChairHeader.y, "SwingChair");
+      swingChair.setOrigin(0.5, -0.5);
 
-    //   let rotAngle = index * angleSpacing;
-    //   console.log(rotAngle);
+      let rotAngle = index * angleSpacing;
+      swingChair.angle += rotAngle;
 
-    //   swingChair.angle += rotAngle;
+      this.add.tween({
+        targets: swingChair,
+        angle: { from: swingChair.angle + 20, to: swingChair.angle - 20 },
+        duration: 700,
+        repeat: -1,
+        yoyo: true
+      });
+    }
 
-    //   this.add.tween({
-    //     targets: swingChair,
-    //     angle: { from: swingChair.angle, to: swingChair.angle -45 },
-    //     duration: 2000,
-    //     repeat: -1
-    //   });
-    // }
+    // create the star for swing chair
+    this.swingChairStar = this.add.image(swingChairBase.x, swingChairBase.y - 180, "StarIcon").setInteractive();
+    // starIcon pulse
+    let swingChairTween = this.add.tween({
+      targets: this.swingChairStar,
+      scaleX: 1.1,
+      scaleY: 1.1,
+      duration: 300,
+      yoyo: true,
+      repeat: -1
+    });
 
+    // star on click
+    this.swingChairStar.once('pointerup',
+      () => {
+        // stop the idle pulse
+        swingChairTween.stop();
+        this.sound.play('Correct_SFX');
+        this.sound.play('SwingChair_SFX');
+        --this.starsToCollect;
+        this.scene.get("HomePage").attainStar(this.swingChairStar.x, this.swingChairStar.y, this.swingChairStar, this, false);
+      });
+
+    // create bumper car word
+    let swingChairWord = this.add.image(swingChairBase.x + 230, swingChairBase.y + 45, "SwingChairWord");
+    let currAudioBtn = this.add.image(swingChairWord.x + 60, swingChairWord.y, "AudioButton").setScale(0.6, 0.6).setInteractive();
+    currAudioBtn.on('pointerdown', this.scene.get('HomePage').buttonAnimEffect.bind(this, currAudioBtn, () => this.sound.play('SwingChair_SFX')));
   }
 
   createBumperCar() {
@@ -109,6 +139,7 @@ class RidesScene extends Phaser.Scene {
         bumperCarStarTween.stop();
         this.sound.play('Correct_SFX');
         this.sound.play('BumperCar_SFX');
+        --this.starsToCollect;
         this.scene.get("HomePage").attainStar(bumperCarStar.x, bumperCarStar.y, bumperCarStar, this, false);
       });
 
@@ -164,6 +195,7 @@ class RidesScene extends Phaser.Scene {
         trainStarIconTween.stop();
         this.sound.play('Correct_SFX');
         this.sound.play('TrainWord_SFX');
+        --this.starsToCollect;
         this.scene.get("HomePage").attainStar(starIcon.x, starIcon.y, starIcon, this, false);
       });
 
@@ -222,7 +254,7 @@ class RidesScene extends Phaser.Scene {
 
       // add hidden star
       if (index == 0) {
-        this.ferrisWheelStarIcon = this.carriageGroup.create(carriagePos.x, carriagePos.y, "StarIcon").setInteractive().setScale(0.7);
+        this.ferrisWheelStarIcon = this.carriageGroup.create(carriagePos.x, carriagePos.y, "StarIcon").setInteractive().setScale(1);
         this.ferrisWheelStarIcon.once('pointerup',
           () => {
             this.carriageGroup.remove(this.ferrisWheelStarIcon);
@@ -231,6 +263,7 @@ class RidesScene extends Phaser.Scene {
             this.starIconTween.stop();
             this.sound.play('Correct_SFX');
             this.sound.play('FerrisWheelWord_SFX');
+            --this.starsToCollect;
             this.scene.get("HomePage").attainStar(this.ferrisWheelStarIcon.x, this.ferrisWheelStarIcon.y, this.ferrisWheelStarIcon, this, false);
           });
 
@@ -259,5 +292,11 @@ class RidesScene extends Phaser.Scene {
   // game timer expired
   onTimerExpired() {
     this.scene.get("HomePage").gameOver(this);
+  }
+
+  checkGameOverCondition() {
+    if (this.starsToCollect <= 0) {
+      this.scene.get("HomePage").gameOver(this);
+    }
   }
 }

@@ -13,14 +13,22 @@ class HomePage extends Phaser.Scene {
   create() {
     this.add.image(config.width / 2, config.height / 2, "HomePageBG");
 
-    this.FoodStoreBtn = this.add.image(130, 430, "FoodStore").setScale(0.7,0.7);
+    this.FoodStoreBtn = this.add.image(130, 430, "FoodStore").setScale(0.7, 0.7);
     this.FoodStoreBtn.alpha = 0.5;
 
-    this.CarnivalGamesBtn = this.add.image(400, 210, "CarnivalGames").setScale(0.7,0.7);
+    this.CarnivalGamesBtn = this.add.image(380, 210, "CarnivalGames").setScale(0.7, 0.7);
     this.CarnivalGamesBtn.alpha = 0.5;
 
-    this.RidesBtn = this.add.image(650, 430, "Rides").setScale(1.7,1.7);
+    this.RidesBtn = this.add.image(635, 380, "Rides");
     this.RidesBtn.alpha = 0.5;
+
+    // Create for when entire game is over
+    this.maskUnderlay = this.add.image(config.width / 2, config.height / 2, "WhiteBox").setScale(config.width, config.height);
+    this.maskUnderlay.tint = 0x000000;
+    this.maskUnderlay.alpha = 0.0;
+    this.maskUnderlay.visible = false;
+    this.maskUnderlay.setInteractive();
+    this.gameOverSplash = this.add.image(config.width / 2, -300, "GameOverSplash");
 
     // navigate to the food store scene
     if (!this.scene.get("FoodStoreScene").visited) {
@@ -43,6 +51,34 @@ class HomePage extends Phaser.Scene {
 
     this.starIcons = this.createGameProgressUI(this);
     this.updateGameProgressUI(this.starIcons);
+
+    if(this.scene.get("FoodStoreScene").visited && this.scene.get("CarnivalGamesScene").visited && this.scene.get("RidesScene").visited)
+    {
+      this.entireGameOver();
+    }
+  }
+
+  entireGameOver() {
+    this.sound.play("LevelComplete_SFX");
+    // due to dragging we need to rearrage the summary box to show up on top
+    this.maskUnderlay.visible = true;
+    this.children.bringToTop(this.maskUnderlay);
+    this.children.bringToTop(this.gameOverSplash);
+
+    // fade in the mask underlay
+    this.add.tween({
+      targets: this.maskUnderlay,
+      alpha: 0.8,
+      duration: 200
+    });
+
+    // drop down tween anim
+    this.add.tween({
+      targets: this.gameOverSplash,
+      y: config.height / 2,
+      ease: "Quad.easeInOut",
+      duration: 1000
+    });
   }
 
   /***************************/
@@ -64,8 +100,7 @@ class HomePage extends Phaser.Scene {
   /************************************/
   // used by scenes to update new score
   /************************************/
-  increaseGlobalScore(ownerScene)
-  {
+  increaseGlobalScore(ownerScene) {
     ++g_Score;
     this.updateGameProgressUI(ownerScene.starIcons, ownerScene);
   }
@@ -75,10 +110,10 @@ class HomePage extends Phaser.Scene {
   /*******************************************/
   createGameProgressUI(target) {
     let starIcons = [];
-    var maxStars = 10;
+    var maxStars = 12;
     var widthSpace = 60;
-    var xStartOffset = 125;
-    var yStartOffset = 50;
+    var xStartOffset = 80;
+    var yStartOffset = 60;
 
     for (var index = 0; index < maxStars; ++index) {
       var texName = 'StarIconBase';
@@ -122,7 +157,7 @@ class HomePage extends Phaser.Scene {
     }
   }
 
- /*******************************************/
+  /*******************************************/
   // spawn hidden star and fly over to next slot and increase global score
   /*******************************************/
   attainStar(spawnX, spawnY, hiddenStar, ownerScene, startDelay) {
@@ -132,8 +167,7 @@ class HomePage extends Phaser.Scene {
     hiddenStar.visible = true;
 
     let flyDelay = 920;
-    if(!startDelay)
-    {
+    if (!startDelay) {
       flyDelay = 0;
     }
 
@@ -155,11 +189,11 @@ class HomePage extends Phaser.Scene {
       x: ownerScene.starIcons[g_Score].x,
       delay: flyDelay,
       onCompleteScope: ownerScene,
-      onComplete: function() 
-      {
+      onComplete: function () {
         ownerScene.sound.play("CollectStar_SFX");
         hiddenStar.visible = false;
         ownerScene.scene.get("HomePage").increaseGlobalScore(ownerScene);
+        ownerScene.checkGameOverCondition();
       }
     });
   }
@@ -175,7 +209,7 @@ class HomePage extends Phaser.Scene {
     var timerBarBase = ownerScene.add.image(config.width / 2 - 150, 120, "TimerBar").setOrigin(0, 0.5);
     ownerScene.timerBarContent = ownerScene.add.image(timerBarBase.x + 53, timerBarBase.y, "TimerBarContent").setOrigin(0, 0.5);
     ownerScene.gameTimer = ownerScene.time.delayedCall(g_LevelTime, ownerScene.onTimerExpired, [], ownerScene);
-    
+
     // create mask white box
     ownerScene.maskUnderlay = ownerScene.add.image(config.width / 2, config.height / 2, "WhiteBox").setScale(config.width, config.height);
     ownerScene.maskUnderlay.tint = 0x000000;
@@ -187,7 +221,7 @@ class HomePage extends Phaser.Scene {
     ownerScene.gameOverSplash = ownerScene.add.image(config.width / 2, -300, "GameOverSplash");
 
     // home btn over splash screen
-    ownerScene.homeBtn = ownerScene.add.image(config.width/2, config.height/2 + 100, "HomeBtn");
+    ownerScene.homeBtn = ownerScene.add.image(config.width / 2, config.height / 2 + 100, "HomeBtn");
     ownerScene.homeBtn.alpha = 0.0;
     ownerScene.homeBtn.once('pointerup', this.buttonAnimEffect.bind(ownerScene, ownerScene.homeBtn, () => ownerScene.scene.start('HomePage')));
 
@@ -217,26 +251,24 @@ class HomePage extends Phaser.Scene {
 
     // drop down tween anim
     ownerScene.add.tween({
-       targets: ownerScene.gameOverSplash,
-       y: config.height / 2,
-       ease : "Quad.easeInOut",
-       onComplete : function()
-       {
-         // stop timer 
-         ownerScene.gameTimer.paused = true;
+      targets: ownerScene.gameOverSplash,
+      y: config.height / 2,
+      ease: "Quad.easeInOut",
+      onComplete: function () {
+        // stop timer 
+        ownerScene.gameTimer.paused = true;
 
         ownerScene.homeBtn.alpha = 1;
-        ownerScene.homeBtn.setInteractive();    
-       },
-       duration: 1000
-     });
+        ownerScene.homeBtn.setInteractive();
+      },
+      duration: 1000
+    });
   }
 
   /*******************************************/
   // Common update stuff for all scenes
   /*******************************************/
-  genericGameSceneUpdate(ownerScene)
-  {
+  genericGameSceneUpdate(ownerScene) {
     ownerScene.timerBarContent.setScale(1 - ownerScene.gameTimer.getOverallProgress(), 1);
   }
 }

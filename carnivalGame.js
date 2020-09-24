@@ -160,6 +160,8 @@ class CarnivalGamesScene extends Phaser.Scene {
     if (this.owner.ringTossed == this.owner.totalTossBottles) {
       let targetFlyOverStar = this.targetSprite.hiddenStar;
 
+      this.owner.sound.play('RingTossGameWord_SFX');
+
       targetFlyOverStar.visible = true;
       // pulse
       this.owner.add.tween({
@@ -212,6 +214,8 @@ class CarnivalGamesScene extends Phaser.Scene {
     // the last click
     if (this.owner.balloonExploded == this.owner.totalBalloons) {
       let targetFlyOverStar = this.targetSprite.hiddenStar;
+
+      this.owner.sound.play('ShootBalloonWord_SFX');
 
       targetFlyOverStar.visible = true;
       // pulse
